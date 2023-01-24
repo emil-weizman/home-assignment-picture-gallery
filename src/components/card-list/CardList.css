@@ -1,0 +1,28 @@
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  padding-top: 10px;
+  width: 650px;
+  margin: 0 auto;
+}
+.box {
+  border: 3px solid lightblue;
+  border-radius: 5px;
+  width: 200px;
+  height: 200px;
+}
+
+/* .button-box button {
+  border: none;
+  padding: 13px 50px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 50px 20px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  border-radius: 5%;
+} */
