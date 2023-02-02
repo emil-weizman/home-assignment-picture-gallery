@@ -1,69 +1,140 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { CardsThunks } from '../../store/cards/cards-thunks'
 import { selectAllCards } from '../../store/cards/cards-slice'
+import { CategoryModal } from '../modals/CategoryModal'
 
 import './CardList.css'
-import { CategoryModal } from '../modal/CategoryModal'
+import { CardViewModal } from '../modals/CardViewModal'
+
+const typesOfCategories = [
+  'backgrounds',
+  'fashion',
+  'nature',
+  'science',
+  'education',
+  'feelings',
+  'health',
+  'people',
+  'religion',
+  'places',
+  'animals',
+  'industry',
+  'computer',
+  'food',
+  'sports',
+  'transportation',
+  'travel',
+  'buildings',
+  'business',
+  'music',
+  'sport',
+]
+
+const randomIndex = Math.floor(Math.random() * typesOfCategories.length)
+const randomCategoryName = typesOfCategories[randomIndex]
 
 export const CardList = () => {
-  const [categoryName, setCategoryName] = useState('')
-  const [showModal, setShowModal] = useState(false)
-
   const dispatch = useDispatch()
+
+  const [categoryName, setCategoryName] = useState('')
+  const [pageNumber, setNumberPage] = useState(1)
+  const [showCategoryModal, setShowCategoryModal] = useState(false)
   const allCards = useSelector(selectAllCards)
 
-  const typesOfCategories = [
-    'backgrounds',
-    'fashion',
-    'nature',
-    'science',
-    'education',
-    'feelings',
-    'health',
-    'people',
-    'religion',
-    'places',
-    'animals',
-    'industry',
-    'computer',
-    'food',
-    'sports',
-    'transportation',
-    'travel',
-    'buildings',
-    'business',
-    'music',
-    'sport',
-  ]
+  const [selectedCard, setSelectedCard] = useState(null)
+  const [showCardView, setShowCardView] = useState(false)
+
+  const justOneCall = useCallback(() => {
+    dispatch(
+      CardsThunks.paginationPage({
+        category: randomCategoryName,
+        page: 1,
+      })
+    )
+  }, [dispatch])
+
+  useEffect(() => {
+    justOneCall()
+  }, [justOneCall])
+
+  const getArtsByPage = (pageNumber) => {
+    dispatch(
+      CardsThunks.paginationPage({
+        category: categoryName,
+        page: pageNumber,
+      })
+    )
+  }
 
   const fetchByCategory = (data) => {
     setCategoryName(data)
     dispatch(CardsThunks.getAllCards(data))
+    setShowCategoryModal(false)
   }
 
   const onModal = () => {
-    setShowModal(true)
+    setShowCategoryModal(true)
   }
 
-  const onClose = () => {
-    setShowModal(false)
+  const onCloseCategory = () => {
+    setShowCategoryModal(false)
+  }
+
+  const onCloseView = () => {
+    setShowCardView(false)
+  }
+
+  const nextPage = () => {
+    const nextPageNumber = pageNumber + 1
+    setNumberPage(nextPageNumber)
+    getArtsByPage(nextPageNumber)
+  }
+
+  const prevPage = () => {
+    const prevPageNumber = pageNumber - 1
+
+    if (pageNumber === 1) return
+
+    setNumberPage(prevPageNumber)
+    getArtsByPage(prevPageNumber)
+  }
+
+  const onSelectedCardView = (card) => {
+    setShowCardView((prev) => !prev)
+
+    setSelectedCard(card)
   }
 
   return (
     <>
-      <button onClick={onModal}>click</button>
-      <h2>{categoryName}</h2>
-      <div className="container">
-        {allCards.map((item) => (
-          <img key={item.id} className="box" src={item.largeImageURL} alt="" />
-        ))}
-      </div>
+      <div className="card_list_page">
+        <div className="card_list_button_box">
+          <button onClick={prevPage}>Prev</button>
+          <button onClick={onModal}>Choose category</button>
+          <button onClick={nextPage}>Next</button>
+        </div>
 
-      {showModal && (
+        <div className="cards_container">
+          {allCards.map((item) => (
+            <img
+              key={item.id}
+              className="card_box"
+              src={item.largeImageURL}
+              alt=""
+              onClick={() => onSelectedCardView(item)}
+            />
+          ))}
+        </div>
+      </div>
+      {showCardView && (
+        <CardViewModal selectedCard={selectedCard} onCloseView={onCloseView} />
+      )}
+
+      {showCategoryModal && (
         <CategoryModal
-          onClose={onClose}
+          onCloseCategory={onCloseCategory}
           typesOfCategories={typesOfCategories}
           fetchByCategory={fetchByCategory}
         />
