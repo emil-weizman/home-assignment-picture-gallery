@@ -127,6 +127,9 @@ export const CardList = () => {
             />
           ))}
         </div>
+        <div className="category_name">
+          #{categoryName ? categoryName : randomCategoryName}
+        </div>
       </div>
       {showCardView && (
         <CardViewModal selectedCard={selectedCard} onCloseView={onCloseView} />

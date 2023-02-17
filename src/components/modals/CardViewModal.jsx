@@ -18,8 +18,6 @@ export const CardViewModal = ({ selectedCard, onCloseView }) => {
 
   const tagsSeparate = tags.trim().split(',')
 
-  console.log(selectedCard)
-
   const onContainerClick = (event) => {
     event.stopPropagation()
   }
