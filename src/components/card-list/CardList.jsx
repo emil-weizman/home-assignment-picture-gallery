@@ -60,9 +60,16 @@ export const CardList = () => {
   }, [justOneCall])
 
   const getArtsByPage = (pageNumber) => {
+    let currentCategory = ''
+    if (!categoryName) {
+      currentCategory = randomCategoryName
+    } else {
+      currentCategory = categoryName
+    }
+
     dispatch(
       CardsThunks.paginationPage({
-        category: categoryName,
+        category: currentCategory,
         page: pageNumber,
       })
     )
@@ -127,9 +134,9 @@ export const CardList = () => {
             />
           ))}
         </div>
-        <div className="category_name">
+        <span className="category_name">
           #{categoryName ? categoryName : randomCategoryName}
-        </div>
+        </span>
       </div>
       {showCardView && (
         <CardViewModal selectedCard={selectedCard} onCloseView={onCloseView} />
