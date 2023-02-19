@@ -1,9 +1,10 @@
 .card_list_page {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  margin: 0 auto;
   width: 800px;
   height: 100vh;
-  margin: 0 auto;
 }
 
 .card_list_button_box {
